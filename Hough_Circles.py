@@ -7,7 +7,7 @@ import numpy as np
 #img = frame
 
 # Imagen original
-img = cv2.imread('canicas.jpg', cv2.IMREAD_COLOR) 
+img = cv2.imread('dos_limones.jpeg', cv2.IMREAD_COLOR) 
 cv2.imshow('Original', img)
 cv2.waitKey(0)
 
@@ -17,7 +17,7 @@ cv2.imshow('Grigio', gray) # grigio es en italiano, pero no se asusten, no tiene
 cv2.waitKey(0)
 
 # Ahora se aplica un filtro pasabajas de 3x3
-gray_blurred = cv2.blur(gray, (7, 7)) 
+gray_blurred = cv2.blur(gray, (11, 11)) 
 cv2.imshow('Borrosa', gray_blurred )
 cv2.waitKey(0)
 
@@ -31,7 +31,7 @@ cv2.waitKey(0)
 # param2, En el caso de utilizar el método HOUGH_GRADIENT, es el umbral mínimo en la detección de bordes por Canny
 # minRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
 # maxRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
-detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 40, param2 = 30, minRadius = 55, maxRadius = 80) 
+detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 60, maxRadius = 80) 
   
 # Revisar que el método haya regresado algún valor
 if detected_circles is not None: 
