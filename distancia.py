@@ -22,7 +22,6 @@ def roi(image, ancho, alto):
     for c in cnts:
         epsilon = 0.01*cv2.arcLength(c,True)
         approx = cv2.approxPolyDP(c,epsilon,True)
-        
         if len(approx) == 4:
             puntos = ordenar_puntos(approx)            
             pts1 = np.float32(puntos)
@@ -35,19 +34,22 @@ def roi(image, ancho, alto):
 #cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 #cap = cv2.imread('circulos.png')
 cap = cv2.VideoCapture('video1.mp4')
+
 while True:
     ret, frame = cap.read()
     
     if ret == False: break
     #frame = imutils.resize(frame, width=720)
     imagen_A4 = roi(frame, ancho=1080, alto=509)
-
+    print(imagen_A4)
     # Deteccion de los circulos verdes
     if imagen_A4 is not None:
         puntos = []
         imagenHSV = cv2.cvtColor(imagen_A4, cv2.COLOR_BGR2HSV)
         verdeBajo = np.array([36, 14, 0], np.uint8)
         verdeAlto = np.array([56, 120, 255], np.uint8)
+        #verdeBajo = np.array([207, 255, 56], np.uint8)
+        #verdeAlto = np.array([56, 255, 193], np.uint8)
         maskVerde = cv2.inRange(imagenHSV, verdeBajo, verdeAlto)
         cnts = cv2.findContours(maskVerde, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
         cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:2]
