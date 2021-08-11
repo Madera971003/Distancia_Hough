@@ -7,7 +7,7 @@ import numpy as np
 #img = frame
 
 # Imagen original
-img = cv2.imread('dos_limones.jpeg', cv2.IMREAD_COLOR) 
+img = cv2.imread('dos_limones.jpeg', cv2.IMREAD_COLOR)
 cv2.imshow('Original', img)
 cv2.waitKey(0)
 
