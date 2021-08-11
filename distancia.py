@@ -41,21 +41,21 @@ while True:
     if ret == False: break
     #frame = imutils.resize(frame, width=720)
     imagen_A4 = roi(frame, ancho=1080, alto=509)
-    print(imagen_A4)
+    #print(imagen_A4)
     # Deteccion de los circulos verdes
     if imagen_A4 is not None:
         puntos = []
         imagenHSV = cv2.cvtColor(imagen_A4, cv2.COLOR_BGR2HSV)
         verdeBajo = np.array([36, 14, 0], np.uint8)
         verdeAlto = np.array([56, 120, 255], np.uint8)
-        #verdeBajo = np.array([207, 255, 56], np.uint8)
-        #verdeAlto = np.array([56, 255, 193], np.uint8)
         maskVerde = cv2.inRange(imagenHSV, verdeBajo, verdeAlto)
         cnts = cv2.findContours(maskVerde, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
         cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:2]
         #Calculando tamaño del objeto y encerrando en rectangulos
         for c in cnts:
             x, y, w, h = cv2.boundingRect(c)
+            #x,y son centro, w,h espesor de rectangulo
+            #print("x = ", x,"y = ", y,"w = ", w,"h = ", h)
             cv2.rectangle(imagen_A4, (x, y), (x+w, y+h), (255, 0, 0), 2)
             puntos.append([x, y, w, h])
 

@@ -1,6 +1,41 @@
 import cv2 
 import numpy as np 
 
+#Cálculo de distancias
+def distancia(puntos, img):
+    if len(puntos) == 2:
+        x1, y1, w1, h1 = puntos[0]
+        x2, y2, w2, h2 = puntos[1]
+        cv2.rectangle(img, (x1, y1), (x1+w1, y1+h1), (255, 0, 0), 2)
+        cv2.rectangle(img, (x2, y2), (x2+w2, y2+h2), (255, 0, 0), 2)
+        if x1 < x2:
+            distancia_pixeles = abs(x2 - (x1+w1)) 
+            distancia_cm = (distancia_pixeles*29.7)/720
+            cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x1+w1+distancia_pixeles//2, y1-30), 2, 0.8, (0,0,255), 1, cv2.LINE_AA)
+            cv2.line(img,(x1+w1,y1-20),(x2, y1-20),(0, 0, 255),2)
+            cv2.line(img,(x1+w1,y1-30),(x1+w1, y1-10),(0, 0, 255),2)
+            cv2.line(img,(x2,y1-30),(x2, y1-10),(0, 0, 255),2)
+            cv2.waitKey(0)
+        else:
+            distancia_pixeles = abs(x1 - (x2+w2))
+            distancia_cm = (distancia_pixeles*29.7)/720
+            cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x2+w2+distancia_pixeles//2, y2-30), 2, 0.8, (0,0,255), 1, cv2.LINE_AA)
+            cv2.line(img,(x2+w2,y2-20),(x1, y2-20),(0, 0, 255),2)
+            cv2.line(img,(x2+w2,y2-30),(x2+w2, y2-10),(0, 0, 255),2)
+            cv2.line(img,(x1,y2-30),(x1, y2-10),(0, 0, 255),2)
+            cv2.imshow('img',img)
+            cv2.waitKey(0)
+            #cv2.imshow('frame',frame)   
+        #k = cv2.waitKey(1) & 0xFF
+        #if k == 27:
+        #    break
+    else:
+        print("Se han detectado más de 2 circulos")
+        print("Verifique que el lugar este bien iliminado")
+
+
+
+
 #cap = cv2.VideoCapture(0)
 #ret, frame = cap.read()
 #cap.release()
@@ -32,18 +67,18 @@ cv2.waitKey(0)
 # minRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
 # maxRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
 detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 60, maxRadius = 80) 
-  
 # Revisar que el método haya regresado algún valor
 if detected_circles is not None: 
   
     # Convertir los parámetros el círculo a, b, y r en enteros de 16 bits
-    detected_circles = np.uint16(np.around(detected_circles)) 
-  
+    detected_circles = np.uint16(np.around(detected_circles))
+    puntos = []
     # Ahora si se recorren todos los círculos detectados
     for pt in detected_circles[0, :]: 
         a, b, r = pt[0], pt[1], pt[2] 
-
         # Dibujar la circunferencia
+        datos = [a, b, r, r]
+        puntos.append(datos)
         cv2.circle(img, (a, b), r, (0, 255, 0), 2) 
         
         # Mostrar los datos de las circunferencias
@@ -53,6 +88,7 @@ if detected_circles is not None:
         cv2.circle(img, (a, b), 1, (0, 0, 255), 3)
 		# Ir mostradndo las circunferencias detectadas
         cv2.imshow("Detección de circunferencias", img) 
-        cv2.waitKey(0) 
-        
+        cv2.waitKey(0)
+
+distancia(puntos, img)
 cv2.destroyAllWindows()
