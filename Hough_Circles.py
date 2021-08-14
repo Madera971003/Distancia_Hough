@@ -15,6 +15,7 @@ def distancia(puntos, img):
             cv2.line(img,(x1,y1-20),(x2, y1-20),(0, 0, 255),2) #Línea horizontal
             cv2.line(img,(x1+w1,y1-30),(x1+w1, y1-10),(0, 0, 255),2)
             cv2.line(img,(x2-w2,y1-30),(x2-w2, y1-10),(0, 0, 255),2)
+            cv2.imshow('img',img)
             cv2.waitKey(0)
         else:
             distancia_pixeles = abs(x1 - (x2+w2)) #Cálculo de dsitancia en pixeles
@@ -30,10 +31,37 @@ def distancia(puntos, img):
         #if k == 27:
         #    break
     else:
-        print("Se han detectado más de 2 circulos")
-        print("Verifique que el lugar este bien iliminado")
+        print("Se han detectado 1 o más de 2 circulos")
+        print("Verifique que el lugar este bien iluminado")
 
+def ordenar_puntos(puntos):
+    n_puntos = np.concatenate([puntos[0], puntos[1], puntos[2], puntos[3]]).tolist()
+    y_order = sorted(n_puntos, key=lambda n_puntos: n_puntos[1])
+    x1_order = y_order[:2]
+    x1_order = sorted(x1_order, key=lambda x1_order: x1_order[0])
+    x2_order = y_order[2:4]
+    x2_order = sorted(x2_order, key=lambda x2_order: x2_order[0])
+    return [x1_order[0], x1_order[1], x2_order[0], x2_order[1]]
 
+#region de interes
+def roi(image, ancho, alto):
+    imagen_alineada = None
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    _, th = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+    #cv2.imshow('th', th)
+    cnts = cv2.findContours(th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:1]
+    #deteccion de vertices
+    for c in cnts:
+        epsilon = 0.01*cv2.arcLength(c,True)
+        approx = cv2.approxPolyDP(c,epsilon,True)
+        if len(approx) == 4:
+            puntos = ordenar_puntos(approx)            
+            pts1 = np.float32(puntos)
+            pts2 = np.float32([[0,0], [ancho,0], [0,alto], [ancho,alto]])
+            M = cv2.getPerspectiveTransform(pts1, pts2)
+            imagen_alineada = cv2.warpPerspective(image, M, (ancho,alto))
+    return imagen_alineada
 
 
 #cap = cv2.VideoCapture(0)
@@ -42,14 +70,16 @@ def distancia(puntos, img):
 #img = frame
 
 # Imagen original
-img = cv2.imread('dos_limones.jpeg', cv2.IMREAD_COLOR)
+cap = cv2.imread('lim1.jpg', cv2.IMREAD_COLOR)
+#ret, frame = cap.read()
+img = roi(cap, ancho=600, alto=509)
 cv2.imshow('Original', img)
 cv2.waitKey(0)
 
 # Convertir a escala de grises
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-#cv2.imshow('Grigio', gray) # grigio es en italiano, pero no se asusten, no tiene Coreanovirus
-#cv2.waitKey(0)
+cv2.imshow('Grigio', gray) # grigio es en italiano, pero no se asusten, no tiene Coreanovirus
+cv2.waitKey(0)
 
 # Ahora se aplica un filtro pasabajas de 3x3
 gray_blurred = cv2.blur(gray, (11, 11)) 
@@ -66,7 +96,7 @@ cv2.waitKey(0)
 # param2, En el caso de utilizar el método HOUGH_GRADIENT, es el umbral mínimo en la detección de bordes por Canny
 # minRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
 # maxRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
-detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 60, maxRadius = 80) 
+detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 40, maxRadius = 60) 
 # Revisar que el método haya regresado algún valor
 if detected_circles is not None: 
     # Convertir los parámetros el círculo a, b, y r en enteros de 16 bits
@@ -88,4 +118,6 @@ if detected_circles is not None:
         cv2.waitKey(0)
 
 distancia(puntos, img)
+
+
 cv2.destroyAllWindows()
