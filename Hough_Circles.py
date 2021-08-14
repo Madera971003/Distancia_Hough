@@ -9,8 +9,8 @@ def distancia(puntos, img):
         cv2.rectangle(img, (x1-w1, y1-h1), (x1+w1, y1+h1), (255, 0, 0), 1)
         cv2.rectangle(img, (x2-w2, y2-h2), (x2+w2, y2+h2), (255, 0, 0), 1)
         if x1 < x2:
-            distancia_pixeles = abs(x2-w2 - (x1-w1)) #Cálculo de dsitancia en pixeles
-            distancia_cm = (distancia_pixeles*29.7)/720 #Cálculo de distancia en cm
+            distancia_pixeles = abs(x2 - x1) #Cálculo de dsitancia en pixeles
+            distancia_cm = (distancia_pixeles)/21.5 #Cálculo de distancia en cm
             cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x1+w1+distancia_pixeles//2, y1-30), 2, 0.8, (0,0,255), 1, cv2.LINE_AA)
             cv2.line(img,(x1,y1-20),(x2, y1-20),(0, 0, 255),2) #Línea horizontal
             cv2.line(img,(x1+w1,y1-30),(x1+w1, y1-10),(0, 0, 255),2)
@@ -18,8 +18,8 @@ def distancia(puntos, img):
             cv2.imshow('img',img)
             cv2.waitKey(0)
         else:
-            distancia_pixeles = abs(x1 - (x2+w2)) #Cálculo de dsitancia en pixeles
-            distancia_cm = (distancia_pixeles*29.7)/720 #Cálculo de distancia en cm
+            distancia_pixeles = abs(x1 - x2) #Cálculo de dsitancia en pixeles
+            distancia_cm = (distancia_pixeles)/21.5 #Cálculo de distancia en cm
             cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x2+w2+distancia_pixeles//2, y2-30), 2, 0.8, (0,0,255), 1, cv2.LINE_AA)
             cv2.line(img,(x2,y2-20),(x1, y2-20),(0, 0, 255),2) #Línea horizontal
             cv2.line(img,(x2,y2-30),(x2, y2-10),(0, 0, 255),2)
@@ -70,9 +70,9 @@ def roi(image, ancho, alto):
 #img = frame
 
 # Imagen original
-cap = cv2.imread('lim1.jpg', cv2.IMREAD_COLOR)
+cap = cv2.imread('cir1.jpg', cv2.IMREAD_COLOR)
 #ret, frame = cap.read()
-img = roi(cap, ancho=600, alto=509)
+img = roi(cap, ancho=600, alto=465)
 cv2.imshow('Original', img)
 cv2.waitKey(0)
 
@@ -96,7 +96,7 @@ cv2.waitKey(0)
 # param2, En el caso de utilizar el método HOUGH_GRADIENT, es el umbral mínimo en la detección de bordes por Canny
 # minRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
 # maxRadius, es el radio mínimo del círculo (no se interpone con la distancia mínima entre el centro y la circunferencia)
-detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 40, maxRadius = 60) 
+detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 30, maxRadius = 80) 
 # Revisar que el método haya regresado algún valor
 if detected_circles is not None: 
     # Convertir los parámetros el círculo a, b, y r en enteros de 16 bits
@@ -116,8 +116,11 @@ if detected_circles is not None:
 		# Ir mostradndo las circunferencias detectadas
         cv2.imshow("Detección de circunferencias", img) 
         cv2.waitKey(0)
+    
+    distancia(puntos, img)
 
-distancia(puntos, img)
+#Llamada para cálculo de distancia
+
 
 
 cv2.destroyAllWindows()
