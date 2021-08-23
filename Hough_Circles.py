@@ -15,19 +15,19 @@ def distancia(puntos, img):
             distancia_cm = (distancia_pixeles)/21.5 #Cálculo de distancia en cm
             cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x1+w1+distancia_pixeles//2, y1-30), 2, 0.8, (0,0,255), 1, cv2.LINE_AA)
             cv2.line(img,(x1,y1-20),(x2, y1-20),(0, 0, 255),2) #Línea horizontal
-            cv2.line(img,(x1+w1,y1-30),(x1+w1, y1-10),(0, 0, 255),2)
-            cv2.line(img,(x2-w2,y1-30),(x2-w2, y1-10),(0, 0, 255),2)
+            cv2.line(img,(x1,y1-30),(x1, y1-10),(0, 0, 255),2)
+            cv2.line(img,(x2,y1-30),(x2, y1-10),(0, 0, 255),2)
             cv2.imshow('img',img)
-            cv2.waitKey(0)
+            #cv2.waitKey(0)
         else:
             distancia_pixeles = abs(x1 - x2) #Cálculo de dsitancia en pixeles
             distancia_cm = (distancia_pixeles)/21.5 #Cálculo de distancia en cm
             cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x2+w2+distancia_pixeles//2, y2-30), 2, 0.8, (0,0,255), 1, cv2.LINE_AA)
             cv2.line(img,(x2,y2-20),(x1, y2-20),(0, 0, 255),2) #Línea horizontal
-            cv2.line(img,(x2,y2-30),(x2, y2-10),(0, 0, 255),2)
-            cv2.line(img,(x1,y2-30),(x1, y2-10),(0, 0, 255),2)
+            cv2.line(img,(x2,y2-30),(x2, y2-10),(0, 0, 255),2) #Línea izquierda
+            cv2.line(img,(x1,y2-30),(x1, y2-10),(0, 0, 255),2) #Línea derecha
             cv2.imshow('img',img)
-            cv2.waitKey(0)
+            #cv2.waitKey(0)
             #cv2.imshow('frame',frame)   
         #k = cv2.waitKey(1) & 0xFF
         #if k == 27:
@@ -65,28 +65,23 @@ def roi(image, ancho, alto):
             imagen_alineada = cv2.warpPerspective(image, M, (ancho,alto))
     return imagen_alineada
 
-
-#cap = cv2.VideoCapture(0)
-#ret, frame = cap.read()
-#cap.release()
-#img = frame
-def main():
+def main(cap):
     # Imagen original
-    cap = cv2.imread('cir1.jpg', cv2.IMREAD_COLOR)
+    #cap = cv2.imread('cir1.jpg', cv2.IMREAD_COLOR)
     #ret, frame = cap.read()
     img = roi(cap, ancho=600, alto=465)
-    cv2.imshow('Original', img)
-    cv2.waitKey(0)
+    #cv2.imshow('Original', img)
+    #cv2.waitKey(0)
 
     # Convertir a escala de grises
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-    cv2.imshow('Grigio', gray) # grigio es en italiano, pero no se asusten, no tiene Coreanovirus
-    cv2.waitKey(0)
+    #cv2.imshow('Grigio', gray) # grigio es en italiano, pero no se asusten, no tiene Coreanovirus
+    #cv2.waitKey(0)
 
     # Ahora se aplica un filtro pasabajas de 3x3
     gray_blurred = cv2.blur(gray, (11, 11)) 
-    cv2.imshow('Borrosa', gray_blurred )
-    cv2.waitKey(0)
+    #cv2.imshow('Borrosa', gray_blurred )
+    #cv2.waitKey(0)
 
     # Aplicar la tranfromada de Hough para detección de círculos
     # parámetros:
@@ -117,17 +112,31 @@ def main():
             cv2.circle(img, (a, b), 1, (0, 0, 255), 3)
             # Ir mostradndo las circunferencias detectadas
             cv2.imshow("Detección de circunferencias", img) 
-            cv2.waitKey(0)
+            #cv2.waitKey(0)
         
         distancia(puntos, img)
 
-    #Llamada para cálculo de distancia
+#Llamada para cálculo de distancia
 
-start_time = time()
-main()
-final_time = time()-start_time
-print("Tiempo: %.10f seg" %final_time)
+#cap = cv2.VideoCapture('video1.mp4')
+cap = cv2.VideoCapture(0)
+#cap.release()
+#img = frame
+while True:
+    ret, frame = cap.read()
+    if ret == False: 
+        print("No se detecta imágen")
+        break
+    elif cv2.waitKey(1) & 0xFF == ord('s'): #Detener el proceso con s en 64 bits
+        break
+    cv2.imshow('Video', frame)
+    main(frame)
+    
+cap.release()
 
-
+#start_time = time()
+#main()
+#final_time = time()-start_time
+#print("Tiempo: %.10f seg" %final_time)
 
 cv2.destroyAllWindows()
