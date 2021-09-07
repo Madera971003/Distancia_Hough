@@ -118,8 +118,8 @@ def main(cap):
 
 #Llamada para cálculo de distancia
 
-#cap = cv2.VideoCapture('video1.mp4')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('hoja2.mp4')
+#cap = cv2.VideoCapture(0)
 #cap.release()
 #img = frame
 while True:
