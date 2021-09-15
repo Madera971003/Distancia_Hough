@@ -67,7 +67,7 @@ def main(cap):
     # Ahora se aplica un filtro pasabajas de 3x3
     gray_blurred = cv2.blur(gray, (11, 11)) 
     cv2.imshow('Borrosa', gray_blurred )
-    detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 30, maxRadius = 80) 
+    detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 15, param1 = 20, param2 = 30, minRadius = 60, maxRadius = 75) 
     # Revisar que el método haya regresado algún valor
     if detected_circles is not None: 
         # Convertir los parámetros el círculo a, b, y r en enteros
