@@ -11,20 +11,20 @@ def distancia(puntos, img):
         if x1 < x2:
             distancia_pixeles = abs(x2 - x1) #Cálculo de dsitancia en pixeles
             distancia_cm = (distancia_pixeles)/21.5 #Cálculo de distancia en cm
-            cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x1+w1+distancia_pixeles//2, y1-30), 2, 0.8, (0,0,0), 1, cv2.LINE_AA)
+            cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x1-w1+distancia_pixeles//2, y1-30), 2, 0.8, (0,0,0), 1, cv2.LINE_AA)
             cv2.line(img,(x1,y1-20),(x2, y1-20),(0, 0, 255),2) #Línea horizontal
             cv2.line(img,(x1,y1-30),(x1, y1-10),(0, 0, 255),2)
             cv2.line(img,(x2,y1-30),(x2, y1-10),(0, 0, 255),2)
-            cv2.imshow('img',img)
+            cv2.imshow('Distancia',img)
             #cv2.waitKey(0)
         else:
             distancia_pixeles = abs(x1 - x2) #Cálculo de dsitancia en pixeles
             distancia_cm = (distancia_pixeles)/21.5 #Cálculo de distancia en cm
-            cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x2+w2+distancia_pixeles//2, y2-30), 2, 0.8, (0,0,0), 1, cv2.LINE_AA)
+            cv2.putText(img, "{:.2f} cm".format(distancia_cm), (x2-w2+distancia_pixeles//2, y2-30), 2, 0.8, (0,0,0), 1, cv2.LINE_AA)
             cv2.line(img,(x2,y2-20),(x1, y2-20),(0, 0, 255),2) #Línea horizontal
             cv2.line(img,(x2,y2-30),(x2, y2-10),(0, 0, 255),2) #Línea izquierda
             cv2.line(img,(x1,y2-30),(x1, y2-10),(0, 0, 255),2) #Línea derecha
-            cv2.imshow('img',img)
+            cv2.imshow('Distancia',img)
     else:
         print("Se han detectado 1 o más de 2 circulos")
         #print("Verifique que el lugar este bien iluminado") #Mensaje extra cuando se trata de cámara en tiempo real
